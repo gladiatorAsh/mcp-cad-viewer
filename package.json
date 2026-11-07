@@ -58,7 +58,7 @@
   "devDependencies": {
     "@types/node": "^26.6.6",
     "@types/three": "^0.170.0",
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.28.2",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   }
