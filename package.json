@@ -2,13 +2,28 @@
   "name": "mcp-cad-viewer",
   "version": "0.1.0",
   "description": "MCP server that opens CAD parts in an interactive 3D viewer using MCP Apps",
+  "mcpName": "io.github.gladiatorAsh/mcp-cad-viewer",
+  "type": "module",
   "main": "dist/server.js",
+  "bin": {
+    "mcp-cad-viewer": "dist/server.js"
+  },
+  "files": [
+    "dist/server.js",
+    "dist/stl.js",
+    "dist/view.js",
+    "view/index.html",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build:view": "esbuild view/main.ts --bundle --format=esm --minify --target=es2022 --outfile=dist/view.js",
     "build": "tsc -p . && npm run build:view",
     "start": "node dist/server.js",
     "smoke": "npm run build && node test/smoke.mjs",
-    "typecheck": "tsc -p . --noEmit"
+    "typecheck": "tsc -p . --noEmit",
+    "prepublishOnly": "npm run build",
+    "test:packed": "bash test/packed.sh"
   },
   "keywords": [
     "mcp",
@@ -20,6 +35,18 @@
   ],
   "author": "Ashutosh Singh",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gladiatorAsh/mcp-cad-viewer.git"
+  },
+  "homepage": "https://github.com/gladiatorAsh/mcp-cad-viewer#readme",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "dependencies": {
     "@modelcontextprotocol/client": "^2.4.0",
     "@modelcontextprotocol/ext-apps": "^2.0.4",
@@ -34,12 +61,5 @@
     "esbuild": "^0.24.2",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3"
-  },
-  "type": "module",
-  "bin": {
-    "mcp-cad-viewer": "dist/server.js"
-  },
-  "engines": {
-    "node": ">=20"
   }
 }

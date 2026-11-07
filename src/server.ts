@@ -3,6 +3,7 @@
 // instead of plain text. Hosts that support MCP Apps render the View in a sandboxed iframe;
 // hosts that don't still get a useful text summary.
 
+import { realpathSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -73,6 +74,14 @@ export function createServer(): McpServer {
 
 // serveStdio picks the protocol era per connection, so the same server works with
 // 2025-era clients (initialize handshake) and stateless 2026-07-28 clients.
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+// Resolve symlinks first: npx and global installs launch the server through node_modules/.bin links.
+const isMain = (() => {
+  try {
+    return !!process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
+})();
+if (isMain) {
   serveStdio(createServer);
 }

@@ -35,8 +35,8 @@ Add it to an MCP Apps–capable host (stdio):
 {
   "mcpServers": {
     "cad-viewer": {
-      "command": "node",
-      "args": ["/path/to/mcp-cad-viewer/dist/server.js"],
+      "command": "npx",
+      "args": ["-y", "mcp-cad-viewer"],
       "env": { "CAD_VIEWER_ROOT": "/path/to/your/parts" }
     }
   }
@@ -50,6 +50,7 @@ Then ask: *"Show me bracket-block.stl"*.
 - [x] `view_part` tool with STL parsing (ASCII and binary), bounding box and triangle count
 - [x] Bundled three.js View delivered as an MCP Apps `ui://` resource
 - [x] Smoke test through a real MCP client
+- [x] Release workflow: tag to publish on npm (with provenance) and the official MCP Registry
 - [ ] Verify rendering in Claude, VS Code and ChatGPT; follow the host's theme
 - [ ] STEP and IGES support (OpenCascade.js, converted server-side to a mesh)
 - [ ] Measurement tools in the View: click two points for a distance, section planes

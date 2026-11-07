@@ -1,0 +1,57 @@
+name: Release
+# Push a tag like v0.2.0 to publish. The tag must match the version in package.json and server.json.
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  npm:
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      id-token: write   # npm provenance, and trusted publishing once it's set up on npmjs.com
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - name: Use an npm that supports trusted publishing
+        run: npm install -g npm@^11.5.1
+      - name: Check versions match the tag
+        run: |
+          for v in $(node -p "require('./package.json').version") $(node -p "const s=require('./server.json');s.version+' '+s.packages[0].version"); do
+            [ "v$v" = "$GITHUB_REF_NAME" ] || { echo "::error::Tag $GITHUB_REF_NAME doesn't match version $v (package.json / server.json)"; exit 1; }
+          done
+      - run: npm ci
+      - run: npm run smoke
+      - run: npm run test:packed
+      # The first release needs an NPM_TOKEN secret. After that, set up trusted publishing on npmjs.com
+      # for this workflow and delete the secret; npm then authenticates through GitHub OIDC.
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  mcp-registry:
+    needs: npm
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # GitHub OIDC login to the MCP Registry for the io.github.gladiatorAsh namespace
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for the release to appear on npm
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          for i in $(seq 1 30); do
+            [ "$(npm view "mcp-cad-viewer@$v" version 2>/dev/null)" = "$v" ] && exit 0
+            sleep 10
+          done
+          echo "::error::mcp-cad-viewer $v didn't appear on npm in time"; exit 1
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+      - run: ./mcp-publisher login github-oidc
+      - run: ./mcp-publisher publish
