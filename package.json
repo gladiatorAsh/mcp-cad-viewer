@@ -1,0 +1,45 @@
+{
+  "name": "mcp-cad-viewer",
+  "version": "0.1.0",
+  "description": "MCP server that opens CAD parts in an interactive 3D viewer using MCP Apps",
+  "main": "dist/server.js",
+  "scripts": {
+    "build:view": "esbuild view/main.ts --bundle --format=esm --minify --target=es2022 --outfile=dist/view.js",
+    "build": "tsc -p . && npm run build:view",
+    "start": "node dist/server.js",
+    "smoke": "npm run build && node test/smoke.mjs",
+    "typecheck": "tsc -p . --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-apps",
+    "cad",
+    "stl",
+    "three.js"
+  ],
+  "author": "Ashutosh Singh",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@modelcontextprotocol/ext-apps": "^2.0.4",
+    "@modelcontextprotocol/node": "^2.1.2",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "three": "^0.170.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/three": "^0.170.0",
+    "esbuild": "^0.24.2",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  },
+  "type": "module",
+  "bin": {
+    "mcp-cad-viewer": "dist/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
