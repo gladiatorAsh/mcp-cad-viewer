@@ -20,6 +20,10 @@ const out = await client.callTool({ name: "view_part", arguments: { path: "brack
 console.log(out.content[0].text);
 assert.equal(out.structuredContent.triangles, 12);
 
+// Absolute paths inside the root work too, which is what CAD servers sharing the folder return.
+const abs = await client.callTool({ name: "view_part", arguments: { path: `${process.cwd()}/samples/bracket-block.stl` } });
+assert.ok(!abs.isError, "absolute paths inside the root are accepted");
+
 const bad = await client.callTool({ name: "view_part", arguments: { path: "../package.json" } });
 assert.ok(bad.isError, "paths outside the root are rejected");
 

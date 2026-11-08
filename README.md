@@ -45,6 +45,10 @@ Add it to an MCP Apps–capable host (stdio):
 
 Then ask: *"Show me bracket-block.stl"*.
 
+## With a CAD server
+
+Root this viewer and a CAD server at the same folder, and "export it as STL and show it to me" ends with the part in the chat. [freecad-mcp-server](https://github.com/gladiatorAsh/freecad-mcp-server) even returns the exact `view_part` call after an STL export. Its README has the full config and demo prompt.
+
 ## Roadmap
 
 - [x] `view_part` tool with STL parsing (ASCII and binary), bounding box and triangle count
@@ -60,6 +64,7 @@ Then ask: *"Show me bracket-block.stl"*.
 
 ## Related
 
+- [freecad-mcp-server](https://github.com/gladiatorAsh/freecad-mcp-server): headless FreeCAD over MCP, tested end to end in CI
 - [fusion-mcp-server](https://github.com/gladiatorAsh/fusion-mcp-server): drives Autodesk Fusion from an agent; this viewer shows the result
 - [mcp-tool-bench](https://github.com/gladiatorAsh/mcp-tool-bench): conformance checks and tool-selection evals for MCP servers
 
